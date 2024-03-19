@@ -4,6 +4,9 @@ const dropdowns = document.querySelectorAll("select");
 const convertBtn = document.querySelector("#convert-btn");
 const fromCountry = document.querySelector(".from select");
 const toCountry = document.querySelector(".to select");
+const resultEl = document.querySelector(".result p");
+const BaseURL =
+  "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies";
 
 for (let dropdown of dropdowns) {
   for (let country in countryList) {
@@ -43,13 +46,15 @@ convertBtn.addEventListener("click", async (evt) => {
     amount.value = "1";
   }
 
-  let searchURL = `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${fromCountry.value.toLowerCase()}.json`;
+  let searchURL = `${BaseURL}/${fromCountry.value.toLowerCase()}.json`;
 
   let result = await fetch(searchURL);
   let dataReq = await result.json();
 
-  console.log(dataReq);
-  console.log(
-    dataReq[fromCountry.value.toLowerCase()][toCountry.value.toLowerCase()]
-  );
+  let conversionRate =
+    dataReq[fromCountry.value.toLowerCase()][toCountry.value.toLowerCase()];
+
+  let convertedAmount = parseFloat(conversionRate.toFixed(2)) * amtVal;
+
+  resultEl.innerHTML = `${amtVal} ${fromCountry.value} ${convertedAmount} ${toCountry.value}`;
 });
